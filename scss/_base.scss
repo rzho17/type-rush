@@ -1,0 +1,24 @@
+$background: #041010;
+$gameboard: #051919;
+$primary: #2bba8a;
+$white: #f2f2f2;
+$gradient: linear-gradient(
+  145deg,
+  rgba(41, 187, 138, 1) 0%,
+  rgba(3, 88, 67, 1) 100%
+);
+$high: #2bba8a;
+$medium: #ffbc03;
+$low: #e95b03;
+$typedText: #042222;
+
+@mixin gradientBorder() {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: $gradient;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}

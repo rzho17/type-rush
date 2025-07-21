@@ -1,0 +1,16 @@
+@use "base" as *;
+
+body {
+  background: $background;
+  color: $white;
+}
+
+main {
+  #game-screen {
+    position: relative;
+    padding: 1rem;
+  }
+  #game-screen::before {
+    @include gradientBorder();
+  }
+}
