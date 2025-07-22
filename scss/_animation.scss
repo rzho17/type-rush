@@ -1,0 +1,17 @@
+@use "base" as *;
+
+$animation: decrease;
+
+@keyframes decrease {
+  0% {
+    background-color: $high;
+    width: 100%;
+  }
+  50% {
+    background-color: $medium;
+  }
+  100% {
+    background-color: $low;
+    width: 0%;
+  }
+}
