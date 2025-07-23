@@ -3,8 +3,12 @@ class Game {
     this.score = 0;
     this.lives = 3;
     this.hiScore = 0;
+    this.wordWidth = 175;
+    this.wordHeight = 40;
     this._elementSelectors();
     this._test();
+    // this._randomCoord();
+    this._placeWord();
   }
 
   _elementSelectors() {
@@ -26,22 +30,70 @@ class Game {
 
   //   get word list from api
 
+  //   set loading screen while waiting for api
+
+  // remove loading screen once api loads
+
+  //   gets width and height of game board
+  //   get width
+  _getScreenWidth() {
+    const width = this.el.gameScreen.clientWidth;
+
+    return width;
+  }
+
+  // get height
+  _getScreenHeight() {
+    const height = this.el.gameScreen.clientHeight;
+
+    return height;
+  }
+
   //   get random coord on game board
+  _randomCoord() {
+    const width = this._getScreenWidth() - this.wordWidth;
+    const height = this._getScreenHeight() - this.wordHeight;
+
+    const randomX = this._generateRandomCoord(width);
+    const randomY = this._generateRandomCoord(height);
+
+    console.log(randomX, randomY);
+    return [randomX, randomY];
+  }
+
+  _generateRandomCoord(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  // function to place word onto game board randomly
+  _placeWord(text) {
+    const word = this._createWord("text");
+
+    const coords = this._randomCoord();
+
+    const x = coords[0];
+    const y = coords[1];
+
+    console.log(x);
+    console.log(y);
+
+    this.el.gameScreen.append(word);
+    word.style.left = `${x}px`;
+    word.style.top = `${y}px`;
+  }
 
   // create word component
   _createWord(word) {
     const wordBg = document.createElement("div");
-    const bg = document.createElement("div");
     const overlay = document.createElement("div");
     const text = document.createElement("span");
 
     wordBg.classList.add("word");
-    bg.classList.add("bg");
+    overlay.classList.add("overlay");
     text.innerText = word;
 
-    wordBg.append(bg, overlay, text);
-
-    this.el.gameScreen.append(wordBg);
+    wordBg.append(overlay, text);
+    return wordBg;
   }
 
   // place word on game board
@@ -53,6 +105,9 @@ class Game {
   // remove word from dom
 
   // increase score
+  _increaseScore() {
+    this.score += 100;
+  }
 
   // remove life
   _removeLife() {

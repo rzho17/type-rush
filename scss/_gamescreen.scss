@@ -86,24 +86,25 @@ main {
     text-align: center;
     width: 175px;
     height: 40px;
-    position: relative;
+    // position: relative;
+    position: absolute;
+    background-color: $wordBg;
 
-    div {
-      @extend .word;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      animation: $animation 15s;
-    }
+    // div {
+    //   position: absolute;
+    //   width: 100%;
+    //   height: 100%;
+    //   top: 0;
+    //   z-index: 1;
+    //   animation: $animation 15s;
+    // }
 
-    .bg {
+    .overlay {
+      border-radius: 2px;
       height: 100%;
       width: 100%;
-      background-color: $wordBg;
       z-index: -1;
+      animation: $animation 15s;
     }
 
     span {
