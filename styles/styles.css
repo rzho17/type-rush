@@ -495,6 +495,10 @@ main .word span {
   transform: translate(-50%, -50%);
   z-index: 2;
 }
+main .word span b {
+  color: #042222;
+  font-weight: normal;
+}
 main #stats-container {
   font-family: "Quicksand", sans-serif;
   font-size: 1.5rem;
