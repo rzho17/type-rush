@@ -24,13 +24,3 @@ $text: "Quicksand", sans-serif;
   justify-content: $justify;
   align-items: $align;
 }
-// @mixin gradientBorder() {
-//   content: "";
-//   position: absolute;
-//   inset: 0;
-//   border-radius: 20px;
-//   border: 2px solid transparent;
-//   background: $gradient;
-//   mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
-//   mask-composite: exclude;
-// }
