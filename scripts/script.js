@@ -83,14 +83,13 @@ class Game {
 
         const data = await response.json();
 
-        this.masterArray = [...data].concat(defaultWords);
-        console.log(this.masterArray);
+        this.masterArray = [...data].concat(shuffleCards(defaultWords));
 
         setTimeout(() => {
           this.el.loadingScreen.style.display = "none";
         }, 2000);
       } catch (error) {
-        alert("Could not grab new words, using default words");
+        alert("Could not fetch new words, using default words");
 
         setTimeout(() => {
           this.el.loadingScreen.style.display = "none";
@@ -133,7 +132,6 @@ class Game {
     const words = document.querySelectorAll(".word");
 
     words.forEach((word) => {
-      console.log(word);
       word.remove();
     });
   }
@@ -284,7 +282,6 @@ class Game {
 
     // removes the word once the overlay animation ends
     overlay.addEventListener("animationend", () => {
-      console.log("i have ended");
       wordBg.remove();
       this.wordsOnScreen.shift();
 
