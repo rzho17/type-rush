@@ -4,7 +4,7 @@ class Game {
     this.default = defaultWords;
     this.sound = new Sound();
     this.score = 0;
-    this.lives = 1;
+    this.lives = 3;
     this.hiScore = JSON.parse(localStorage.getItem("hiscore"));
     this.wordWidth = 175;
     this.wordHeight = 40;
@@ -83,7 +83,8 @@ class Game {
 
         const data = await response.json();
 
-        this.masterArray = [...data];
+        this.masterArray = [...data].concat(defaultWords);
+        console.log(this.masterArray);
 
         setTimeout(() => {
           this.el.loadingScreen.style.display = "none";
@@ -324,9 +325,9 @@ class Game {
 
     const arrayLength = this.masterArray.length;
 
-    if (arrayLength <= 500 && arrayLength >= 490) {
+    if (arrayLength <= 1000 && arrayLength >= 990) {
       this._changeWordTimes(3000, "20s");
-    } else if (arrayLength >= 470) {
+    } else if (arrayLength >= 970) {
       this._changeWordTimes(1800, "16s");
     } else {
       this._changeWordTimes(1300, "12s");
