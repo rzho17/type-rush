@@ -396,7 +396,47 @@ main #game-screen {
   position: relative;
   height: 85vh;
   padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid #2bba8a;
   background-color: #051919;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+main #game-screen .lose-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+main #game-screen .lose-screen h1 span {
+  margin-left: -2rem;
+}
+main #game-screen .lose-screen p {
+  margin: 1rem 0;
+}
+main #game-screen .lose-screen .taunt {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+main #game-screen .lose-screen .final-score span {
+  font-weight: 700;
+  color: #2bba8a;
+}
+main #game-screen .lose-screen button {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  border: 1px solid;
+  border-radius: 10px;
+  margin: 0.5rem;
+}
+main #game-screen .lose-screen .play-again:hover,
+main #game-screen .lose-screen .home:hover {
+  color: #2bba8a;
+  cursor: pointer;
+}
+main #game-screen .loading {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -407,17 +447,23 @@ main #game-screen .title-content {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10rem;
+  padding: 5rem 2.5rem;
   border-radius: 10px;
   backdrop-filter: blur(2px);
+}
+main #game-screen .title-content .rules {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 100;
 }
 main #game-screen img {
   position: absolute;
   height: 100%;
   width: 100%;
 }
-main #game-screen .title-content,
-main #game-screen img {
+main #game-screen .loading {
+  display: none;
+}
+main #game-screen .lose-screen {
   display: none;
 }
 main #game-screen h1 {
@@ -435,6 +481,7 @@ main #game-screen p {
   font-family: "Quicksand", sans-serif;
   letter-spacing: 1.5px;
   font-size: 1.25rem;
+  margin: 0.5rem 0;
 }
 main #game-screen .start-btn {
   position: relative;
@@ -442,6 +489,8 @@ main #game-screen .start-btn {
   padding: 0.75rem 1.5rem;
   font-size: 1.5rem;
   font-family: "Quicksand", sans-serif;
+  border: 1px solid #2bba8a;
+  border-radius: 10px;
 }
 main #game-screen .start-btn:hover {
   cursor: pointer;
@@ -450,26 +499,6 @@ main #game-screen button {
   color: #f2f2f2;
   border: none;
   background-color: transparent;
-}
-main #game-screen .start-btn:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  border: 2px solid transparent;
-  background: linear-gradient(-45deg, rgb(41, 187, 138) 0%, rgb(3, 88, 67) 100%);
-  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-}
-main #game-screen::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  border: 2px solid transparent;
-  background: linear-gradient(-45deg, rgb(41, 187, 138) 0%, rgb(3, 88, 67) 100%);
-  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
 }
 main .word {
   font-family: "Quicksand", sans-serif;
@@ -499,10 +528,23 @@ main .word span b {
   color: #042222;
   font-weight: normal;
 }
+main .current-word {
+  display: none;
+  font-family: "Quicksand", sans-serif;
+  width: max-content;
+  margin: 0.5rem auto;
+  padding: 1rem 0;
+}
+main .current-word span {
+  color: #2bba8a;
+  border: 1px solid #f2f2f2;
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+}
 main #stats-container {
   font-family: "Quicksand", sans-serif;
   font-size: 1.5rem;
-  padding: 1rem 0;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -513,6 +555,9 @@ main #stats-container .text {
 }
 main #stats-container .score {
   font-family: "Space Mono", monospace;
+}
+main #lives {
+  display: none;
 }
 
 /*# sourceMappingURL=styles.css.map */

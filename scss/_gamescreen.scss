@@ -12,15 +12,68 @@ main {
     position: relative;
     height: 85vh;
     padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid $primary;
     background-color: $gameboard;
 
     @include flex(column);
 
+    .lose-screen {
+      @include flex(column);
+
+      h1 {
+        span {
+          margin-left: -2rem;
+        }
+      }
+
+      p {
+        margin: 1rem 0;
+      }
+
+      .taunt {
+        font-weight: 600;
+        font-size: 1.5rem;
+      }
+
+      .final-score {
+        span {
+          font-weight: 700;
+          color: $primary;
+        }
+      }
+
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 1.25rem;
+        border: 1px solid;
+        border-radius: 10px;
+
+        margin: 0.5rem;
+      }
+
+      .play-again,
+      .home {
+        &:hover {
+          color: $high;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .loading {
+      @include flex(column);
+    }
     .title-content {
       @include flex(column);
-      padding: 10rem;
+      padding: 5rem 2.5rem;
       border-radius: 10px;
       backdrop-filter: blur(2px);
+
+      .rules {
+        font-family: $text;
+        font-weight: 100;
+      }
     }
     img {
       position: absolute;
@@ -31,8 +84,17 @@ main {
     // for testing the game
     .title-content,
     img {
+      // display: none;
+    }
+
+    .loading {
       display: none;
     }
+
+    .lose-screen {
+      display: none;
+    }
+
     h1 {
       font-family: $heading;
       font-size: 7rem;
@@ -51,13 +113,18 @@ main {
       font-family: $text;
       letter-spacing: 1.5px;
       font-size: 1.25rem;
+      margin: 0.5rem 0;
     }
+
     .start-btn {
       position: relative;
       margin-top: 2rem;
       padding: 0.75rem 1.5rem;
       font-size: 1.5rem;
       font-family: $text;
+
+      border: 1px solid $primary;
+      border-radius: 10px;
       &:hover {
         cursor: pointer;
       }
@@ -68,14 +135,6 @@ main {
       border: none;
       background-color: transparent;
     }
-
-    .start-btn:before {
-      @include gradientBorder();
-    }
-  }
-
-  #game-screen::before {
-    @include gradientBorder();
   }
 
   .word {
@@ -121,10 +180,26 @@ main {
     }
   }
 
+  .current-word {
+    display: none;
+    font-family: $text;
+    width: max-content;
+    margin: 0.5rem auto;
+    padding: 1rem 0;
+
+    span {
+      color: $primary;
+      border: 1px solid $white;
+      border-radius: 10px;
+      padding: 0.5rem;
+      margin-left: 0.5rem;
+    }
+  }
+
   #stats-container {
     font-family: $text;
     font-size: 1.5rem;
-    padding: 1rem 0;
+    // padding: 1rem 0;
     @include flex(row, space-between);
 
     .text {
@@ -133,5 +208,9 @@ main {
     .score {
       font-family: $heading;
     }
+  }
+
+  #lives {
+    display: none;
   }
 }

@@ -11,6 +11,13 @@
     />
 
     <link rel="stylesheet" href="styles/styles.css" />
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
     <title>TypeRush</title>
   </head>
   <body>
@@ -23,33 +30,48 @@
         <div class="title-content">
           <h1><span>Type</span>Rush</h1>
           <p>Your keyboard’s about to get a workout.</p>
+          <p class="rules">Rules: Simply type the words as they appear</p>
+          <p class="rules">
+            Don't lose all your lives and survive as long as you can
+          </p>
           <p>Let’s TypeRush!</p>
           <div class="start-btn">
             <button>Start Game</button>
           </div>
         </div>
-      </section>
-      <div class="word">
-        <div class="overlay"></div>
-        <div></div>
-        <span>animations</span>
-      </div>
 
+        <div class="lose-screen">
+          <h1>Game <span>Over</span></h1>
+          <p class="taunt">That was just a warm up right?</p>
+          <p class="final-score">Your score: <span>123456</span></p>
+          <div class="btn-container">
+            <button class="home">Home</button>
+            <button class="play-again">Play Again</button>
+          </div>
+        </div>
+
+        <div class="loading">
+          <h1>Loading Game</h1>
+          <p>Get ready to type fast...</p>
+        </div>
+      </section>
+
+      <div class="current-word">current word typed: <span></span></div>
       <div id="stats-container">
         <div id="high-score">
           <span class="text">high score: </span>
-          <span class="score">0000000</span>
+          <span class="score">0</span>
         </div>
         <div id="lives">
           <span class="text">lives: </span>
-          <span>heart</span>
+          <span class="num-of-lives">heart</span>
         </div>
         <div id="score">
           <span class="text">score: </span>
-          <span class="score">000000</span>
+          <span class="score">0</span>
         </div>
       </div>
     </main>
-    <script src="scripts/script.js"></script>
+    <script type="module" src="scripts/script.js"></script>
   </body>
 </html>

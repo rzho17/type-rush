@@ -1,8 +1,11 @@
+import { shuffleCards, defaultWords } from "./defaultWords.js";
 class Game {
   constructor() {
+    this.default = defaultWords;
+    this.sound = new Sound();
     this.score = 0;
-    this.lives = 3;
-    this.hiScore = 0;
+    this.lives = 1;
+    this.hiScore = JSON.parse(localStorage.getItem("hiscore"));
     this.wordWidth = 175;
     this.wordHeight = 40;
     this.coords = {
@@ -24,42 +27,140 @@ class Game {
     ];
     this.wordsOnScreen = [];
     this.playerInput = "";
-    // this.playerInput = document.createElement("input");
-    // this.playerInput = [];
     this._elementSelectors();
-    this._test();
-    // this._randomCoord();
-    // this._placeWord();
-    // this._gameInterval();
-    this._playerKeydown();
+    this.gameInterval;
+    this._updateHiScore();
+    this._clickEvents();
   }
 
+  // set game element selectors
   _elementSelectors() {
     this.el = {};
+    // start screen
     this.el.startBtn = document.querySelector(".start-btn");
     this.el.titleContent = document.querySelector(".title-content");
     this.el.titleImg = document.querySelector("#game-screen img");
     this.el.gameScreen = document.querySelector("#game-screen");
-    // this.hiScoreContainer = document.querySelector("#high-score .score");
-    // this.currentScoreContainer = document.querySelector("#score .score");
+
+    // score container
+    this.el.livesContainer = document.querySelector("#lives");
+    this.el.numOfLives = document.querySelector(".num-of-lives");
+    this.el.currentScore = document.querySelector("#score .score");
+    this.el.hiScore = document.querySelector("#high-score .score");
+
+    // lose-screen
+    this.el.loseScreen = document.querySelector(".lose-screen");
+    this.el.home = document.querySelector(".home");
+    this.el.playAgain = document.querySelector(".play-again");
+    this.el.finalScore = document.querySelector(".final-score span");
+
+    // loading
+    this.el.loadingScreen = document.querySelector(".loading");
+
+    // current word span
+    this.el.currentWordContainer = document.querySelector(".current-word");
+    this.el.currentWord = document.querySelector(".current-word span");
   }
 
-  _gameFlow() {}
-  _test() {
-    this.el.startBtn.addEventListener("click", () => {
-      console.log("hey");
+  // initializes game click events
+  _clickEvents() {
+    this.el.startBtn.addEventListener("click", () => this._gameFlow());
+
+    this.el.home.addEventListener("click", () => this._setTitleScreen());
+    this.el.playAgain.addEventListener("click", () =>
+      this._setPlayAgainScreen()
+    );
+  }
+
+  // gets word from api
+  // if api fails resorts to default imported word list
+  _getWordsApi(amount = 500) {
+    const wordUrl = `https://random-word-api.vercel.app/api?words=${amount}`;
+
+    const getData = async () => {
+      try {
+        const response = await fetch(wordUrl);
+
+        const data = await response.json();
+
+        this.masterArray = [...data];
+
+        setTimeout(() => {
+          this.el.loadingScreen.style.display = "none";
+        }, 2000);
+      } catch (error) {
+        alert("Could not grab new words, using default words");
+
+        setTimeout(() => {
+          this.el.loadingScreen.style.display = "none";
+        }, 2000);
+
+        const shuffled = shuffleCards(defaultWords);
+        this.masterArray = [...shuffled];
+
+        console.error(error);
+      }
+    };
+
+    getData();
+  }
+
+  // sets loading screen
+  _setLoadScreen() {
+    this._updateHiScore();
+    this._setLivesDisplay();
+    this._updateCurrentScore();
+    this.el.titleImg.style.display = "none";
+    this.el.titleContent.style.display = "none";
+    this.el.loadingScreen.style.display = "flex";
+    this.el.currentWordContainer.style.display = "block";
+    this.el.currentWord.innerHTML = "";
+
+    this.el.livesContainer.style.display = "block";
+  }
+
+  // set play again screen
+  _setPlayAgainScreen() {
+    this._resetGame();
+    this.el.loseScreen.style.display = "none";
+    this.el.currentWord.innerHTML = "";
+    this._gameFlow();
+  }
+
+  // remove all word elements from dom
+  _removeAllWords() {
+    const words = document.querySelectorAll(".word");
+
+    words.forEach((word) => {
+      console.log(word);
+      word.remove();
     });
   }
-  // score
-  // high score
 
-  //   get word list from api
+  // sets title screen elements
+  _setTitleScreen() {
+    this.el.titleContent.style.display = "flex";
+    this.el.loseScreen.style.display = "none";
+    this.el.currentWordContainer.style.display = "none";
 
-  //   set loading screen while waiting for api
+    this.el.livesContainer.style.display = "none";
+    this._resetGame();
 
-  // remove loading screen once api loads
+    this._updateCurrentScore();
+  }
 
-  //   gets width and height of game board
+  // sets gameflow
+  _gameFlow() {
+    // loading screen to allow api to get words
+    // once api finishes load the game
+    // load the player keydown
+
+    this._setLoadScreen();
+    this._getWordsApi();
+    this._playerKeydown();
+    this.gameInterval = setInterval(this._addWordsInterval, 3000);
+  }
+
   //   get width
   _getScreenWidth() {
     const width = this.el.gameScreen.clientWidth;
@@ -82,11 +183,11 @@ class Game {
     const randomX = this._generateRandomCoord(width);
     const randomY = this._generateRandomCoord(height);
 
-    console.log(randomX, randomY);
     this.coords.x = randomX;
     this.coords.y = randomY;
   }
 
+  // creates random num
   _generateRandomCoord(max) {
     return Math.floor(Math.random() * max);
   }
@@ -107,34 +208,36 @@ class Game {
     });
   }
 
-  // clears the letter filter
+  // clears letters from letter filter
   _clearLetterFilter() {
     const wordList = document.querySelectorAll(".word span");
 
     wordList.forEach((word) => {
       word.innerHTML = word.textContent;
     });
-
-    // console.log("cleared");
   }
 
   // finds index if word is in the on screen words
   _findWordIndex(word) {
     const index = this.wordsOnScreen.indexOf(word);
 
-    console.log(index);
     if (index >= 0) {
       this.playerInput = "";
+      this.el.currentWord.innerText = "";
       this._clearLetterFilter();
       return index;
     }
   }
 
+  // main game element
+  // takes key input from user into string
+  // if the string matches a word in the array
+  // remove it and increase game score
   _playerKeydown() {
-    // this._findWordIndex();
-    window.addEventListener("keydown", (e) => {
+    this._keydown = this._keydown = (e) => {
       const letter = e.key;
       const length = e.key.length;
+      this.sound.playSound();
 
       const isLetter = this.regex.test(letter);
 
@@ -143,20 +246,27 @@ class Game {
           0,
           this.playerInput.length - 1
         );
-        console.log(this.playerInput);
-      }
-      if (isLetter && length === 1) {
-        this.playerInput += letter;
-        console.log(this.playerInput);
+        this.el.currentWord.innerHTML = this.playerInput;
       }
 
-      // start of game flow, will need to refactor this into its own function
+      if (isLetter && length === 1) {
+        this.playerInput += letter;
+        this.el.currentWord.innerHTML = this.playerInput;
+      }
+
       this._letterFilter();
+
       const index = this._findWordIndex(this.playerInput);
+
       if (index >= 0) {
         this._removeWord(index);
+
+        this._increaseScore();
+        this._updateCurrentScore();
       }
-    });
+    };
+
+    window.addEventListener("keydown", this._keydown);
   }
 
   // create word component
@@ -171,16 +281,63 @@ class Game {
 
     wordBg.append(overlay, text);
 
+    // removes the word once the overlay animation ends
+    overlay.addEventListener("animationend", () => {
+      console.log("i have ended");
+      wordBg.remove();
+      this.wordsOnScreen.shift();
+
+      this._removeLife();
+      this._setLivesDisplay();
+
+      if (this.lives <= 0) {
+        this._gameLost();
+      }
+    });
+
     return wordBg;
   }
 
-  _gameInterval() {
-    setInterval(() => {
-      const poppedWord = this.masterArray.pop();
-      this.wordsOnScreen.push(poppedWord);
-      console.log(this.wordsOnScreen);
-      this._placeWord(poppedWord);
-    }, 3000);
+  // updates the animation duration for each word element
+  _setWordTimer(time) {
+    const overlay = document.querySelectorAll(".overlay");
+
+    overlay.forEach((item) => {
+      item.style.animationDuration = time;
+    });
+  }
+
+  // changes interval and animation duration for word elements
+  _changeWordTimes(interval, seconds) {
+    this._changeInterval(interval);
+    this._setWordTimer(seconds);
+  }
+
+  // removes word from master array
+  // adds it to words on screen
+  // places word
+  // changes difficulty as master length decreases
+  _addWordsInterval = () => {
+    const poppedWord = this.masterArray.pop();
+    this.wordsOnScreen.push(poppedWord);
+    this._placeWord(poppedWord);
+
+    const arrayLength = this.masterArray.length;
+
+    if (arrayLength <= 500 && arrayLength >= 490) {
+      this._changeWordTimes(3000, "20s");
+    } else if (arrayLength >= 470) {
+      this._changeWordTimes(1800, "16s");
+    } else {
+      this._changeWordTimes(1300, "12s");
+    }
+  };
+
+  // changes interval
+  _changeInterval(time) {
+    clearInterval(this.gameInterval);
+
+    this.gameInterval = setInterval(this._addWordsInterval, time);
   }
 
   // function to place word onto game board randomly
@@ -196,56 +353,51 @@ class Game {
     word.style.top = `${y}px`;
   }
 
-  //   game flow
-  // get array of words from api
-  // start creating word elements from the create word function using values from array
-  // will either pop or shift to get the last or first index of word array
-
-  // not sure how to do this part, im thinking locking the user in to only type the first word on screen
-  // but i would rather have the user be able to type whatever word they see on screen
-  // im thinking about adding those pop/shift words into another array
-  // and then have a document event listener to listen to keyboard keydown
-  // those key down will be pushed into a seperate array or turned into a string
-
-  // then that array or string will be compared to see if there is a match inside the pop/shift words array
-  // if there is a match then it will slice and remove that index from the word array
-  // then it will remove the word element from the dom somehow
-  // maybe can remove based on the node list inner text === to the word or something
-  // and clear the string/array for the next word
-
-  // store the popped words into array
-  // find index of current word popped
-  // use that index for the node list of game screen and remove it
-
-  // I also would like the to have the word being typed highlight the current letters that have been typed
-  // on the matched word but im not sure how to do that part
-
-  //   remove word from game screen
-  // store the popped words into array
-  // find index of current word popped
-  // use that index for the node list of game screen and remove it
+  // remove words based on array index where words were typed
   _removeWord(index) {
     const gameScreenChildren = this.el.gameScreen.children.length;
+    const permanentItems = 4;
 
-    if (gameScreenChildren > 2) {
+    if (gameScreenChildren > permanentItems) {
       // we need to also splice the array so the index matches with node list
-      this.el.gameScreen.children[index + 2].remove();
+      this.el.gameScreen.children[index + permanentItems].remove();
       this._removeWordArray(index);
     }
   }
 
+  // remove words from array
   _removeWordArray(index) {
     this.wordsOnScreen.splice(index, 1);
   }
-  // typing elements
-
-  // check if word typed === a current word on screen
-
-  // remove word from dom
 
   // increase score
   _increaseScore() {
     this.score += 100;
+
+    this._setHiScore();
+  }
+
+  // updates current score
+  _updateCurrentScore() {
+    this.el.currentScore.innerHTML = this.score;
+  }
+
+  // updates hiscore
+  _updateHiScore() {
+    this.el.hiScore.innerText = this.hiScore;
+  }
+
+  // get the hiscore from local
+  // if current score > hiscore
+  // update hiscore
+  // set hiscore
+  _setHiScore() {
+    if (this.score >= this.hiScore) {
+      this.hiScore = this.score;
+
+      this._updateHiScore();
+      localStorage.setItem("hiscore", JSON.stringify(this.hiScore));
+    }
   }
 
   // remove life
@@ -253,26 +405,44 @@ class Game {
     this.lives--;
   }
 
-  // check gameover
+  _setLivesDisplay() {
+    this.el.numOfLives.innerHTML = this.lives;
+  }
 
-  // play again or go home
+  // set lose screens
+  _gameLost() {
+    this._removeAllWords();
+    this._endgame();
+    this.el.loseScreen.style.display = "flex";
+    this.el.finalScore.innerText = this.score;
+  }
+
+  // removes all words and event listener
+  // clears intervals
+  _endgame() {
+    window.removeEventListener("keydown", this._keydown);
+    clearInterval(this.gameInterval);
+  }
+
+  // resets game values so user can play again
+  _resetGame() {
+    this.score = 0;
+    this.lives = 3;
+    this.masterArray = [];
+    this.wordsOnScreen = [];
+    this.playerInput = "";
+    clearInterval(this.gameInterval);
+  }
 }
 
-const wordUrl = "https://random-word-api.herokuapp.com/word?length=5&number=10";
+// sound class
+// plays a keyboard click sound when called
+class Sound {
+  playSound() {
+    const audio = new Audio("../assets/keyboard-click.mp3");
 
-const getData = async () => {
-  try {
-    const response = await fetch(wordUrl);
-
-    const data = await response.json();
-
-    console.log(data);
-  } catch (error) {
-    console.error(error);
+    audio.play();
   }
-};
+}
 
-getData();
 const game = new Game();
-
-// game._createWord("heyyyyasdfa");
